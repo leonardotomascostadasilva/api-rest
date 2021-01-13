@@ -1,6 +1,13 @@
-const app = require('express')();
+const app = require("express")();
+const consign = require("consign");
 
-app.get('/', (_req, res) => {
+consign({ cwd: "src", verbose: false })
+  .include("./config/middlewares.js")
+  .then('./routes')
+  .then('./config/routes.js')
+  .into(app);
+
+app.get("/", (_req, res) => {
   res.status(200).send();
 });
 

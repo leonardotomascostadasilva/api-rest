@@ -5,7 +5,7 @@ test('Devo conhecer as principais  assertivas do jest', () => {
 });
 
 test('Devo saber trabalhar com objr', () => {
-  const obj = { name: 'Jhon', age: 12 };
+  const obj = { name: 'Leonardo', age: 24 };
   expect(obj).toHaveProperty('name');
-  expect(obj).toHaveProperty('age', 12);
+  expect(obj).toHaveProperty('age', 24);
 });

@@ -23,6 +23,16 @@ test("Deve inserir uma conta com sucesso", () => {
     });
 });
 
+test("Não deve inserir uma conta sem nome", () => {
+  return request(app)
+    .post(MAIN_ROUTE)
+    .send({ user_id: user.id })
+    .then((result) => {
+      expect(result.status).toBe(400);
+      expect(result.body.error).toBe("Nome é um atributo obrigatório");
+    });
+});
+
 test("Deve listar todas as contas", () => {
   return app
     .db("accounts")

@@ -34,14 +34,29 @@ test("Deve listar todas as contas", () => {
     });
 });
 
-test('Deve retornar uma conta por Id', () => {
+test("Deve retornar uma conta por Id", () => {
   return app
     .db("accounts")
-    .insert({ name: "Acc by Id", user_id: user.id }, ['id'])
-    .then(acc => request(app).get(`${MAIN_ROUTE}/${acc[0].id}`))
+    .insert({ name: "Acc by Id", user_id: user.id }, ["id"])
+    .then((acc) => request(app).get(`${MAIN_ROUTE}/${acc[0].id}`))
     .then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.name).toBe('Acc by Id');
+      expect(res.body.name).toBe("Acc by Id");
       expect(res.body.user_id).toBe(user.id);
-    })
-})
+    });
+});
+
+test("Deve alterar uma conta", () => {
+  return app
+    .db("accounts")
+    .insert({ name: "Acc To Update", user_id: user.id }, ["id"])
+    .then((acc) =>
+      request(app)
+        .put(`${MAIN_ROUTE}/${acc[0].id}`)
+        .send({ name: "Acc Update" })
+    )
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe("Acc Update");
+    });
+});

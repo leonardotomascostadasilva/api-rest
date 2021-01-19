@@ -1,6 +1,7 @@
 const request = require("supertest");
 const jwt = require("jwt-simple");
 const app = require("../../src/app");
+const transactions = require("../../src/routes/transactions");
 
 const MAIN_ROUTE = "/v1/transactions";
 
@@ -89,4 +90,29 @@ test("Deve inserir uma transação com sucesso", () => {
       expect(res.status).toBe(201);
       expect(res.body.acc_id).toBe(accUser.id);
     });
+});
+
+test("Deve retornar uma transação por ID", () => {
+  return app
+    .db("transactions")
+    .insert(
+      {
+        description: "T ID",
+        date: new Date(),
+        ammount: 100,
+        type: "I",
+        acc_id: accUser.id,
+      },
+      ["id"]
+    )
+    .then((trans) =>
+      request(app)
+        .get(`${MAIN_ROUTE}/${trans[0].id}`)
+        .set("authorization", `bearer ${user.token}`)
+        .then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.id).toBe(trans[0].id);
+          expect(res.body.description).toBe("T ID");
+        })
+    );
 });

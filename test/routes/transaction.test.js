@@ -63,7 +63,8 @@ test("Deve listar apenas as transações do usuário", () => {
       },
     ])
     .then(() =>
-      request(app).get(MAIN_ROUTE)
+      request(app)
+        .get(MAIN_ROUTE)
         .set("authorization", `bearer ${user.token}`)
         .then((res) => {
           expect(res.status).toBe(200);
@@ -71,4 +72,21 @@ test("Deve listar apenas as transações do usuário", () => {
           expect(res.body[0].description).toBe("T1");
         })
     );
+});
+
+test("Deve inserir uma transação com sucesso", () => {
+  return request(app)
+    .post(MAIN_ROUTE)
+    .set("authorization", `bearer ${user.token}`)
+    .send({
+      description: "T1",
+      date: new Date(),
+      ammount: 100,
+      type: "I",
+      acc_id: accUser.id,
+    })
+    .then((res) => {
+      expect(res.status).toBe(201);
+      expect(res.body.acc_id).toBe(accUser.id);
+    });
 });

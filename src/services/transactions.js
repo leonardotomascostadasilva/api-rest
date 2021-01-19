@@ -1,3 +1,5 @@
+const transactions = require("../routes/transactions");
+
 module.exports = (app) => {
   const find = (userId, filter = {}) => {
     return app
@@ -8,5 +10,9 @@ module.exports = (app) => {
       .select();
   };
 
-  return { find };
+  const save = (transactions) => {
+    return app.db("transactions").insert(transactions, "*");
+  };
+
+  return { find, save };
 };

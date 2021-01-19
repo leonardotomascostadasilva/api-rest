@@ -10,7 +10,7 @@ consign({ cwd: "src", verbose: false })
   .then("./config/middlewares.js")
   .then("./services")
   .then("./routes")
-  .then("./config/routes.js")
+  .then("./config/router.js")
   .into(app);
 
 app.get("/", (_req, res) => {
@@ -20,6 +20,7 @@ app.get("/", (_req, res) => {
 app.use((err, _req, res, next) => {
   const { name, message } = err;
   if (name === "ValidationError") res.status(400).json({ error: message });
+  if (name === "RecursoIndevidoError") res.status(403).json({ error: message });
   else res.status(500).json({ name, message, stack });
   next(err);
 });

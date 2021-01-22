@@ -1,4 +1,4 @@
-const transactions = require("../routes/transactions");
+const ValidationError = require("../errors/ValidationError");
 
 module.exports = (app) => {
   const find = (userId, filter = {}) => {
@@ -13,8 +13,34 @@ module.exports = (app) => {
     return app.db("transactions").where(filter).first();
   };
   const save = (transactions) => {
-    return app.db("transactions").insert(transactions, "*");
-  };
+    if (!transactions.description)
+      throw new ValidationError("Descrição é um atributo obrigatório");
+    if (!transactions.ammount)
+      throw new ValidationError("Valor é um atributo obrigatório");
+    if (!transactions.date)
+      throw new ValidationError("Data é um atributo obrigatório");
+    if (!transactions.type)
+      throw new ValidationError("Tipo é um atributo obrigatório");
+    if (!transactions.acc_id)
+      throw new ValidationError("Conta é um atributo obrigatório");
+    if (!(transactions.type === "O" || transactions.type === "I"))
+      throw new ValidationError("Tipo inválido");
 
-  return { find, save, findOne };
+    const newTransaction = { ...transactions };
+    if (
+      (transactions.type === "I" && transactions.ammount < 0) ||
+      (transactions.type === "O" && transactions.ammount > 0)
+    ) {
+      newTransaction.ammount *= -1;
+    }
+
+    return app.db("transactions").insert(newTransaction, "*");
+  };
+  const update = (id, transaction) => {
+    return app.db("transactions").where({ id }).update(transaction, "*");
+  };
+  const remove = (id) => {
+    return app.db("transactions").where({ id }).del();
+  };
+  return { find, save, findOne, update, remove };
 };
